@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GÜZERGÂH — Sokak ve Yapı Fotoğrafları</title>
+<style>
+  :root{
+    --asphalt: #17181a;
+    --asphalt-2: #202226;
+    --concrete: #9a9890;
+    --concrete-pale: #d9d6cc;
+    --paper: #efece2;
+    --signal: #e3ac0a;
+    --oxide: #a8452f;
+    --line: rgba(239,236,226,0.14);
+    --font-display: 'Oswald', 'Arial Narrow', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+    --font-body: 'Inter', 'Helvetica Neue', sans-serif;
+  }
+
+  @font-face{
+    font-family:'Oswald';
+    src: local('Oswald');
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background: var(--asphalt);
+    color: var(--paper);
+    font-family: var(--font-body);
+    line-height:1.5;
+    overflow-x:hidden;
+  }
+
+  ::selection{ background: var(--signal); color: var(--asphalt); }
+
+  a{ color:inherit; }
+
+  /* ---------- Utility: plate label (street-sign style) ---------- */
+  .plate{
+    display:inline-flex;
+    align-items:center;
+    gap:.5em;
+    font-family: var(--font-mono);
+    font-size:0.7rem;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color: var(--asphalt);
+    background: var(--signal);
+    padding:0.3em 0.7em;
+    border-radius:2px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    min-height:100svh;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    padding: 6vw 6vw 4vw;
+    position:relative;
+    background:
+      linear-gradient(180deg, rgba(23,24,26,0.2), rgba(23,24,26,0.85)),
+      repeating-linear-gradient(
+        115deg,
+        var(--asphalt) 0px, var(--asphalt) 140px,
+        var(--asphalt-2) 140px, var(--asphalt-2) 142px
+      );
+  }
+
+  .hero-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    font-family: var(--font-mono);
+    font-size:0.75rem;
+    letter-spacing:0.08em;
+    color: var(--concrete);
+    text-transform:uppercase;
+  }
+
+  .hero-top .loc{ text-align:right; }
+
+  .hero-mid{
+    margin-top: 8vh;
+  }
+
+  .hero-eyebrow{
+    font-family: var(--font-mono);
+    font-size:0.85rem;
+    letter-spacing:0.35em;
+    color: var(--signal);
+    text-transform:uppercase;
+    margin-bottom:1.2rem;
+  }
+
+  .hero-title{
+    font-family: var(--font-display);
+    font-weight:600;
+    text-transform:uppercase;
+    font-size: clamp(3.2rem, 13vw, 9.5rem);
+    line-height:0.86;
+    letter-spacing:0.01em;
+    color: var(--paper);
+  }
+
+  .hero-title span{
+    display:block;
+    color:transparent;
+    -webkit-text-stroke: 1.5px var(--concrete-pale);
+  }
+
+  .hero-sub{
+    max-width: 34ch;
+    margin-top:1.6rem;
+    color: var(--concrete-pale);
+    font-size:1rem;
+  }
+
+  .hero-bottom{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:1.5rem;
+    border-top:1px solid var(--line);
+    padding-top:1.2rem;
+    margin-top:4vh;
+  }
+
+  .hero-bottom .gear{
+    font-family: var(--font-mono);
+    font-size:0.75rem;
+    color: var(--concrete);
+    letter-spacing:0.05em;
+  }
+
+  .scroll-cue{
+    font-family: var(--font-mono);
+    font-size:0.7rem;
+    letter-spacing:0.2em;
+    color: var(--concrete);
+    display:flex;
+    align-items:center;
+    gap:0.6em;
+  }
+
+  .scroll-cue::after{
+    content:"";
+    width:1px; height:28px;
+    background: var(--concrete);
+    animation: drop 1.8s ease-in-out infinite;
+  }
+
+  @keyframes drop{
+    0%{ transform:scaleY(0); transform-origin:top; }
+    50%{ transform:scaleY(1); transform-origin:top; }
+    50.01%{ transform-origin:bottom; }
+    100%{ transform:scaleY(0); transform-origin:bottom; }
+  }
+
+  /* ---------- Statement ---------- */
+  .statement{
+    padding: 10vh 6vw;
+    max-width: 900px;
+    border-bottom:1px solid var(--line);
+  }
+
+  .statement .num{
+    font-family:var(--font-mono);
+    color: var(--signal);
+    font-size:0.8rem;
+    letter-spacing:0.2em;
+  }
+
+  .statement p{
+    font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+    color: var(--concrete-pale);
+    margin-top:1.2rem;
+    font-weight:300;
+  }
+
+  .statement .credit{
+    margin-top:2rem;
+    font-family:var(--font-mono);
+    font-size:0.75rem;
+    color:var(--concrete);
+    text-transform:uppercase;
+    letter-spacing:0.08em;
+  }
+
+  /* ---------- Gallery ---------- */
+  .gallery{
+    padding: 6vh 6vw 10vh;
+  }
+
+  .gallery-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:3rem;
+    flex-wrap:wrap;
+    gap:1rem;
+  }
+
+  .gallery-head h2{
+    font-family: var(--font-display);
+    text-transform:uppercase;
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    letter-spacing:0.02em;
+  }
+
+  .gallery-head .count{
+    font-family:var(--font-mono);
+    font-size:0.8rem;
+    color: var(--concrete);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-auto-rows: 12vw;
+    gap: 10px;
+  }
+
+  .frame{
+    position:relative;
+    overflow:hidden;
+    background: linear-gradient(135deg, var(--asphalt-2), #2c2f34);
+    border:1px solid var(--line);
+    cursor: pointer;
+  }
+
+  .frame img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+    filter: grayscale(15%) contrast(1.05);
+    transition: transform .6s cubic-bezier(.2,.7,.2,1), filter .6s;
+  }
+
+  .frame:hover img{
+    transform: scale(1.06);
+    filter: grayscale(0%) contrast(1.05);
+  }
+
+  .frame .ph-fill{
+    position:absolute; inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    font-family: var(--font-mono);
+    font-size:0.7rem;
+    color: var(--concrete);
+    letter-spacing:0.08em;
+    padding:1rem;
+    text-transform:uppercase;
+  }
+
+  .frame .tag{
+    position:absolute;
+    left:10px; bottom:10px;
+    z-index:2;
+    opacity:0;
+    transform: translateY(6px);
+    transition: opacity .35s ease, transform .35s ease;
+  }
+
+  .frame:hover .tag{ opacity:1; transform:translateY(0); }
+
+  .frame::after{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(0deg, rgba(0,0,0,0.55), transparent 55%);
+    opacity:0;
+    transition:opacity .35s ease;
+    pointer-events:none;
+  }
+
+  .frame:hover::after{ opacity:1; }
+
+  /* size variants to create the block/lot rhythm of a city grid */
+  .frame.w2{ grid-column: span 2; }
+  .frame.w3{ grid-column: span 3; }
+  .frame.w4{ grid-column: span 4; }
+  .frame.h2{ grid-row: span 2; }
+
+  @media (max-width: 780px){
+    .grid{ grid-template-columns: repeat(2, 1fr); grid-auto-rows: 42vw; }
+    .frame.w2, .frame.w3, .frame.w4{ grid-column: span 2; }
+    .hero{ padding: 8vw 6vw; }
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    padding: 6vh 6vw 8vh;
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    flex-wrap:wrap;
+    gap:2rem;
+    font-family: var(--font-mono);
+    font-size:0.75rem;
+    color: var(--concrete);
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+  }
+
+  footer .brand{
+    font-family: var(--font-display);
+    font-size:1.4rem;
+    color: var(--concrete-pale);
+    text-transform:uppercase;
+    letter-spacing:0.03em;
+  }
+
+  footer a{
+    color: var(--signal);
+    text-decoration:none;
+    border-bottom:1px solid transparent;
+  }
+  footer a:hover{ border-bottom-color: var(--signal); }
+
+  /* reveal on scroll */
+  .reveal{
+    opacity:0;
+    transform: translateY(18px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.in{ opacity:1; transform:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    .reveal{ opacity:1; transform:none; transition:none; }
+    .scroll-cue::after{ animation:none; }
+    .frame img{ transition:none; }
+  }
+
+  a:focus-visible, .frame:focus-visible{
+    outline: 2px solid var(--signal);
+    outline-offset: 3px;
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-top">
+    <div>GÜZERGÂH<br>SOKAK &amp; YAPI ARŞİVİ</div>
+    <div class="loc">İSTANBUL, TÜRKİYE<br>SÜREGELEN SERİ</div>
+  </div>
+
+  <div class="hero-mid">
+    <div class="hero-eyebrow">Online Sergi</div>
+    <h1 class="hero-title">GÜZER<span>GÂH</span></h1>
+    <p class="hero-sub">Bir şehrin içinde yürüyerek biriktirilen kareler: caddeler, cepheler, kesişen yapılar. Bu sergi, sabit bir mekândan değil, adım adım yürünen bir güzergâhtan doğuyor.</p>
+  </div>
+
+  <div class="hero-bottom">
+    <div class="gear">EKİPMAN: CANON EOS R10</div>
+    <div class="scroll-cue">AŞAĞI KAYDIR</div>
+  </div>
+</section>
+
+<section class="statement reveal">
+  <div class="num">01 / SUNUŞ</div>
+  <p>Yıllardır aynı sokaklarda dolaşıp kamerayla not tutuyorum. Bu sergi, o notların bir seçkisi — şehrin dokusuna, ışığına ve yapılarına dair biriken bir bakış.</p>
+  <div class="credit">Fotoğraflar &amp; Küratörlük — Levent Sıvakcı</div>
+</section>
+
+<section class="gallery">
+  <div class="gallery-head reveal">
+    <h2>Seçki</h2>
+    <div class="count">12 KARE — DÜZENLENİYOR</div>
+  </div>
+
+  <div class="grid">
+    <!-- Her .frame bir fotoğraf çerçevesidir. İçine <img src="fotograflar/foto1.jpg" alt="..."> ekleyerek
+         placeholder'ı gerçek fotoğrafla değiştirebilirsin. Aşağıdaki notlarda anlatılıyor. -->
+    <div class="frame w3 h2 reveal" tabindex="0">
+      <div class="ph-fill">Fotoğraf 01<br>buraya eklenecek</div>
+      <span class="tag plate">KADIKÖY — 01</span>
+    </div>
+    <div class="frame w3 reveal" tabindex="0">
+      <div class="ph-fill">Fotoğraf 02</div>
+      <span class="tag plate">KARAKÖY — 02</span>
+    </div>
+    <div class="frame w3 reveal" tabindex="0">
+      <div class="ph-fill">Fotoğraf 03</div>
+      <span class="tag plate">BEYOĞLU — 03</span>
+    </div>
+    <div class="frame w2 h2 reveal" tabindex="0">
+      <div class="ph-fill">Fotoğraf 04</div>
+      <span class="tag plate">ŞİŞLİ — 04</span>
+    </div>
+    <div class="frame w2 h2 reveal" tabindex="0">
+      <div class="ph-fill">Fotoğraf 05</div>
+      <span class="tag plate">FATİH — 05</span>
+    </div>
+    <div class="frame w2 h2 reveal" tabindex="0">
+      <div class="ph-fill">Fotoğraf 06</div>
+      <span class="tag plate">ÜSKÜDAR — 06</span>
+    </div>
+    <div class="frame w4 reveal" tabindex="0">
+      <div class="ph-fill">Fotoğraf 07</div>
+      <span class="tag plate">BEŞİKTAŞ — 07</span>
+    </div>
+    <div class="frame w2 reveal" tabindex="0">
+      <div class="ph-fill">Fotoğraf 08</div>
+      <span class="tag plate">BALAT — 08</span>
+    </div>
+    <div class="frame w3 reveal" tabindex="0">
+      <div class="ph-fill">Fotoğraf 09</div>
+      <span class="tag plate">MODA — 09</span>
+    </div>
+    <div class="frame w3 reveal" tabindex="0">
+      <div class="ph-fill">Fotoğraf 10</div>
+      <span class="tag plate">GALATA — 10</span>
+    </div>
+    <div class="frame w2 reveal" tabindex="0">
+      <div class="ph-fill">Fotoğraf 11</div>
+      <span class="tag plate">TOPHANE — 11</span>
+    </div>
+    <div class="frame w4 reveal" tabindex="0">
+      <div class="ph-fill">Fotoğraf 12</div>
+      <span class="tag plate">CİHANGİR — 12</span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="brand">Güzergâh</div>
+  <div>
+    Fotoğraflar: Levent Sıvakcı<br>
+    <a href="#">İletişim / Instagram eklenecek</a>
+  </div>
+  <div>© 2026 — Tüm hakları saklıdır</div>
+</footer>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el=> io.observe(el));
+</script>
+
+</body>
+</html>
